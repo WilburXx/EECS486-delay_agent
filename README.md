@@ -40,13 +40,25 @@ DelayAgent/
 ## Requirements
 
 - Python 3.11
+- On Linux, make sure the `venv` module is available for your Python 3.11 install.
 
 ## Setup
+
+Linux and macOS:
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+cp .env.example .env
+```
+
+If `python3.11` is not on your `PATH` but Python 3.11 is your default `python3`, this also works:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 cp .env.example .env
 ```
 
@@ -92,6 +104,8 @@ The processing step reads `data/dataset_manifest.json`, ingests all available lo
 
 ## Run
 
+All run commands below work on Linux and macOS from the project root after activating the virtual environment.
+
 CLI smoke test:
 
 ```bash
@@ -121,6 +135,21 @@ PYTHONPATH=src pytest
 Suggested flow:
 
 1. `python -m scripts.fetch_dataset`
-2. Start the API with `PYTHONPATH=src uvicorn app.api:app --reload`
-3. Call `POST /ingest` to ingest the manifest-backed PDF and HTML-derived text corpus
+2. `PYTHONPATH=src python -m scripts.process_dataset`
+3. Start the API with `PYTHONPATH=src uvicorn app.api:app --reload` or open the Streamlit UI
 4. Call `POST /analyze_claim` or use the Streamlit UI
+
+## Linux Compatibility
+
+DelayAgent is designed to run cross-platform and uses `pathlib` for filesystem paths, so there are no hard-coded macOS-only runtime paths in the application code.
+
+If you are running on Linux, the usual workflow is:
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+cp .env.example .env
+PYTHONPATH=src python -m scripts.process_dataset
+PYTHONPATH=src streamlit run src/app/ui.py
+```
