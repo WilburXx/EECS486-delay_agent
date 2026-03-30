@@ -130,6 +130,22 @@ PYTHONPATH=src streamlit run src/app/ui.py
 PYTHONPATH=src pytest
 ```
 
+## Experiments
+
+To run the starter scenario-based experiment set:
+
+```bash
+PYTHONPATH=src python -m scripts.run_experiments
+```
+
+This reads scenarios from `experiments/scenarios.json` and writes a structured results file to:
+
+```text
+experiments/results/latest.json
+```
+
+You can use this output to summarize retrieval behavior, eligibility labels, lane selection, and extracted policy fields in your report.
+
 ## Notes
 
 Suggested flow:

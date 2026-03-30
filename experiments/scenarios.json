@@ -1,0 +1,34 @@
+[
+  {
+    "id": "delta_chase_both_lanes",
+    "query": "My Delta flight was delayed 14 hours overnight because of bad weather. Delta did not provide a hotel voucher, so I paid for a hotel, dinner, breakfast, and rides to and from the hotel. I booked the trip with my Chase Sapphire Preferred card and I have all of my receipts. Am I eligible for anything from Delta or from my card benefits?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Both airline and card-benefit lanes may be relevant."
+  },
+  {
+    "id": "delta_chase_not_eligible_card_threshold",
+    "query": "My Delta flight from Seattle to New York was delayed 7 hours overnight. I had to pay for a hotel, dinner, breakfast, and rides to and from the hotel. I booked the trip with my Chase Sapphire Preferred card and I have all of my receipts. Can I make a claim?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Used to test explicit delay-threshold comparison against card benefits."
+  },
+  {
+    "id": "alaska_chase_airline_primary",
+    "query": "My Alaska Airlines flight was delayed 10 hours overnight because of weather. Alaska did not provide a hotel or meal voucher. I paid out of pocket for dinner, breakfast, and a hotel near the airport. I booked the trip with my Chase Sapphire Preferred card and I have all of my receipts. Am I eligible for compensation?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "airline",
+    "notes": "Tests two-lane reasoning where airline may be primary and card lane may be secondary."
+  },
+  {
+    "id": "unclear_missing_facts",
+    "query": "My flight was delayed but I do not know for how long. I paid for meals, but I am not sure which card I used and I do not have receipts. Am I eligible for anything?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "general",
+    "notes": "Tests conservative uncertainty handling when critical facts are missing."
+  }
+]
