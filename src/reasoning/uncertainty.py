@@ -50,7 +50,10 @@ class UncertaintyDetector:
     _delay_patterns = [
         re.compile(r"\bdelay(?:ed)?(?:\s+(?:for|of))?\s+\d+(?:\.\d+)?\s*hours?\b", re.IGNORECASE),
         re.compile(r"\b\d+(?:\.\d+)?\s*hours?\s+(?:delay|delayed)\b", re.IGNORECASE),
+        re.compile(r"\b(?:more than|over|at least)\s+\d+(?:\.\d+)?\s*hours?\b", re.IGNORECASE),
         re.compile(r"\b\d+(?:\.\d+)?\s*hr[s]?\b", re.IGNORECASE),
+        re.compile(r"\ba full day\b|\bfull day\b", re.IGNORECASE),
+        re.compile(r"\bovernight\b", re.IGNORECASE),
     ]
     _disruption_patterns = [
         re.compile(r"\bflight delay\b", re.IGNORECASE),

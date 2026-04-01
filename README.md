@@ -132,7 +132,7 @@ PYTHONPATH=src pytest
 
 ## Experiments
 
-To run the starter scenario-based experiment set:
+To run the scenario-based experiment suite:
 
 ```bash
 PYTHONPATH=src python -m scripts.run_experiments

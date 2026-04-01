@@ -319,12 +319,10 @@ class ClaimAnalysisService:
                 "united",
                 "american airlines",
                 "alaska",
-                "flight",
                 "bag",
                 "baggage",
                 "carrier",
                 "airline",
-                "connection",
                 "missed my connection",
             )
         )
@@ -349,6 +347,17 @@ class ClaimAnalysisService:
         if len(lane_analyses) == 1:
             return lane_analyses[0], []
 
+        benefit_lane = next((lane for lane in lane_analyses if lane.lane_name == "benefit"), None)
+        airline_lane = next((lane for lane in lane_analyses if lane.lane_name == "airline"), None)
+        if (
+            benefit_lane is not None
+            and airline_lane is not None
+            and self._should_prefer_benefit_lane(user_query, benefit_lane, airline_lane)
+        ):
+            secondary = [lane for lane in lane_analyses if lane is not benefit_lane]
+            secondary.sort(key=lambda lane: self._lane_priority(user_query, lane), reverse=True)
+            return benefit_lane, secondary
+
         ranked = sorted(
             lane_analyses,
             key=lambda lane: self._lane_priority(user_query, lane),
@@ -365,7 +374,19 @@ class ClaimAnalysisService:
             "Not Eligible": 1,
         }.get(label, 0)
         specificity_rank = 1 if lane.lane_name == "benefit" and self._mentions_benefit(user_query) else 0
-        return (label_rank, lane.eligibility.confidence, specificity_rank)
+        explicit_threshold_rank = (
+            1 if lane.extracted_requirements.minimum_delay_threshold_hours.value is not None else 0
+        )
+        tentative_airline_penalty = (
+            -1 if lane.lane_name == "airline" and self._airline_lane_is_tentative(lane) else 0
+        )
+        return (
+            label_rank,
+            explicit_threshold_rank,
+            specificity_rank,
+            tentative_airline_penalty,
+            lane.eligibility.confidence,
+        )
 
     def _mentions_benefit(self, user_query: str) -> bool:
         """Return whether the query explicitly mentions card or insurance benefits."""
@@ -384,6 +405,39 @@ class ClaimAnalysisService:
                 "benefit",
             )
         )
+
+    def _should_prefer_benefit_lane(
+        self,
+        user_query: str,
+        benefit_lane: LaneAnalysis,
+        airline_lane: LaneAnalysis,
+    ) -> bool:
+        """Prefer a benefit lane when it reflects a stronger explicit rules decision."""
+        if not self._mentions_benefit(user_query):
+            return False
+        if benefit_lane.eligibility.label.value == "Eligible":
+            return True
+        if (
+            benefit_lane.eligibility.label.value == "Not Eligible"
+            and benefit_lane.extracted_requirements.minimum_delay_threshold_hours.value is not None
+            and airline_lane.eligibility.label.value == "Eligible"
+            and self._airline_lane_is_tentative(airline_lane)
+        ):
+            return True
+        return False
+
+    def _airline_lane_is_tentative(self, lane: LaneAnalysis) -> bool:
+        """Identify airline outcomes that look more discretionary than rule-bound."""
+        if lane.lane_name != "airline":
+            return False
+        if lane.uncertainty.missing_fields:
+            return True
+        if lane.uncertainty.ambiguous_policy_signals:
+            return True
+        has_threshold = lane.extracted_requirements.minimum_delay_threshold_hours.value is not None
+        has_cap = lane.extracted_requirements.reimbursement_cap.value is not None
+        has_docs = bool(lane.extracted_requirements.required_documentation.value)
+        return has_threshold and not has_cap and not has_docs
 
     def _merge_passages(
         self,
