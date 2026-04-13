@@ -70,6 +70,8 @@ def run_scenario(service: ClaimAnalysisService, scenario: ExperimentScenario) ->
     response = service.analyze_claim(user_query=scenario.query, top_k=scenario.top_k)
     primary_lane = infer_primary_lane(response.summary)
     retrieved_doc_ids = [passage.metadata.document_id for passage in response.retrieved_passages]
+    retrieved_chunks = [passage.model_dump() for passage in response.retrieved_passages]
+    retrieved_psges = [chunk['chunk']['text'] for chunk in retrieved_chunks]
 
     label_match = (
         None
@@ -79,7 +81,7 @@ def run_scenario(service: ClaimAnalysisService, scenario: ExperimentScenario) ->
     lane_match = (
         None
         if scenario.expected_primary_lane is None or scenario.expected_primary_lane == "airline_or_benefit"
-        else primary_lane == scenario.expected_primary_lane
+        else primary_lane in scenario.expected_primary_lane
     )
 
     return {
@@ -90,6 +92,7 @@ def run_scenario(service: ClaimAnalysisService, scenario: ExperimentScenario) ->
             "confidence": response.eligibility.confidence,
             "primary_lane": primary_lane,
             "retrieved_doc_ids": retrieved_doc_ids,
+            "retrieved_passages": retrieved_psges,
             "retrieved_citations": [passage.citation for passage in response.retrieved_passages],
             "supporting_chunk_ids": response.eligibility.supporting_chunk_ids,
             "delay_threshold_hours": response.extracted_requirements.minimum_delay_threshold_hours.value,
