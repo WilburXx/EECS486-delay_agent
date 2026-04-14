@@ -6,8 +6,6 @@
     "expected_label": "Eligible",
     "expected_primary_lane": "airline_or_benefit",
     "notes": "Both airline and card-benefit lanes may be relevant."
-<<<<<<< HEAD
-=======
   },
   {
     "id": "delta_chase_not_eligible_card_threshold",
@@ -160,6 +158,5 @@
     "expected_label": "Not Eligible",
     "expected_primary_lane": "airline_or_benefit",
     "notes": "Tests a strong Mastercard trip-delay scenario with overnight delay and documented expenses."
->>>>>>> 8b23d21 (Fixed previous commit)
   }
 ]
