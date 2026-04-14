@@ -6,5 +6,160 @@
     "expected_label": "Eligible",
     "expected_primary_lane": "airline_or_benefit",
     "notes": "Both airline and card-benefit lanes may be relevant."
+<<<<<<< HEAD
+=======
+  },
+  {
+    "id": "delta_chase_not_eligible_card_threshold",
+    "query": "My Delta flight from Seattle to New York was delayed 7 hours overnight. I had to pay for a hotel, dinner, breakfast, and rides to and from the hotel. I booked the trip with my Chase Sapphire Preferred card and I have all of my receipts. Can I make a claim?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Tests explicit delay-threshold comparison against card benefits."
+  },
+  {
+    "id": "alaska_chase_airline_primary",
+    "query": "My Alaska Airlines flight was delayed 10 hours overnight because of weather. Alaska did not provide a hotel or meal voucher. I paid out of pocket for dinner, breakfast, and a hotel near the airport. I booked the trip with my Chase Sapphire Preferred card and I have all of my receipts. Am I eligible for compensation?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "airline",
+    "notes": "Tests two-lane reasoning where airline may be primary and card lane may be secondary."
+  },
+  {
+    "id": "unclear_missing_facts",
+    "query": "My flight was delayed but I do not know for how long. I paid for meals, but I am not sure which card I used and I do not have receipts. Am I eligible for anything?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "general",
+    "notes": "Tests conservative uncertainty handling when critical facts are missing."
+  },
+  {
+    "id": "delta_baggage_delay_airline_path",
+    "query": "My checked bag on Delta was delayed for 26 hours after an international flight. I had to buy toiletries and a change of clothes, and I kept the receipts. Can Delta reimburse me for these expenses?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "airline",
+    "notes": "Airline baggage-delay scenario with receipts and clear essential purchases."
+  },
+  {
+    "id": "delta_baggage_delay_missing_receipts",
+    "query": "My checked bag on Delta was delayed for a full day after my flight. I bought toiletries and clothes, but I lost my receipts. Can I still claim reimbursement?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "airline",
+    "notes": "Tests baggage-delay claims with weaker documentation."
+  },
+  {
+    "id": "amex_trip_delay_short_delay",
+    "query": "My flight was delayed 3 hours and I missed my connection. I paid for dinner at the airport. I booked the trip with my American Express card. Does the Amex trip delay benefit cover this?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Short delay intended to fall below common Amex trip-delay thresholds."
+  },
+  {
+    "id": "amex_trip_delay_long_delay",
+    "query": "My flight was delayed 8 hours overnight and I had to pay for a hotel, dinner, breakfast, and taxi rides. I booked the ticket with my American Express card and I kept all receipts. Can I claim trip delay coverage?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Longer Amex delay case with a complete expense and receipt trail."
+  },
+  {
+    "id": "mastercard_baggage_delay_case",
+    "query": "My checked bag was delayed for more than 24 hours on an international trip. I paid for toiletries and basic clothing and used my Mastercard to book the trip. I still have my receipts and baggage report. Is there baggage delay coverage?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Tests Mastercard baggage-delay benefit retrieval and extraction."
+  },
+  {
+    "id": "trip_cancellation_general_case",
+    "query": "I had to cancel my trip because of a covered emergency and I booked the trip with a Mastercard. I lost prepaid travel expenses and want to know whether trip cancellation benefits may apply.",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "benefit",
+    "notes": "Tests retrieval of trip cancellation material with underspecified facts."
+  },
+  {
+    "id": "delta_amex_both_lanes_weather_delay",
+    "query": "My Delta flight was delayed 9 hours overnight because of weather. Delta did not give me a hotel voucher, so I paid for a hotel, dinner, breakfast, and rides to and from the hotel. I booked the trip with my American Express card and I saved all of my receipts. Am I eligible for anything from Delta or from my card benefits?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Tests combined Delta and Amex reasoning with both airline reimbursement and card trip-delay benefits potentially relevant."
+  },
+  {
+    "id": "alaska_amex_short_delay_not_eligible",
+    "query": "My Alaska Airlines flight was delayed 4 hours and I paid for dinner at the airport. I booked the trip with my American Express card and I have the receipt. Can I get reimbursed through my card benefits?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Tests short delay below common Amex trip-delay thresholds on a non-Delta airline."
+  },
+  {
+    "id": "alaska_mastercard_baggage_delay_eligible",
+    "query": "My checked bag on Alaska Airlines was delayed for 30 hours after my trip. I had to buy toiletries and basic clothes, and I kept my receipts and baggage delay report. I booked the trip with my Mastercard. Is there anything I can claim from the airline or my card?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Tests baggage-delay benefits with Alaska plus Mastercard and complete documentation."
+  },
+  {
+    "id": "delta_mastercard_trip_cancellation_unclear",
+    "query": "I booked a Delta trip with my Mastercard and had to cancel because of a family emergency. I lost some prepaid travel expenses, but I am not sure whether my reason counts as a covered event. Would trip cancellation benefits apply?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Tests trip cancellation with incomplete facts about whether the cancellation reason is covered."
+  },
+  {
+    "id": "alaska_chase_missing_receipts_unclear",
+    "query": "My Alaska Airlines flight was delayed 12 hours overnight because of weather and I had to pay for a hotel and meals. I booked the trip with my Chase Sapphire Preferred card, but I lost most of my receipts. Am I still eligible for anything?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Tests otherwise strong eligibility facts weakened by missing documentation."
+  },
+  {
+    "id": "delta_mastercard_short_baggage_delay_unclear",
+    "query": "My checked bag on Delta arrived late. I used my Mastercard to book the trip and I have receipts. Is this enough for baggage delay coverage?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Tests baggage delay that is likely below common benefit timing thresholds."
+  },
+  {
+    "id": "delta_chase_baggage_delay_with_docs_concrete",
+    "query": "My checked bag on Delta was delayed for 28 hours after my flight. I filed a baggage delay report with Delta at the airport and kept all receipts for toiletries and a change of clothes. I booked the trip with my Chase Sapphire Preferred card. Can I be reimbursed for these expenses?",
+    "top_k": 5,
+    "expected_label": "Eligible",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Now includes baggage report + receipts, making both airline and Chase benefit eligibility clearly satisfied."
+  },
+  {
+    "id": "delta_amex_both_lanes_short_delay_concrete",
+    "query": "My Delta flight was delayed 4 hours overnight due to a mechanical issue. I booked the entire round-trip ticket with my American Express Platinum card and I kept all receipts. Am I eligible for reimbursement?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "benefit",
+    "notes": "Specifies Amex Platinum (which has trip delay coverage) and full round-trip purchase, removing ambiguity in card eligibility."
+  },
+  {
+    "id": "alaska_amex_trip_cancellation_covered_event_nonconcrete",
+    "query": "I had to cancel my Alaska Airlines trip because I felt sick before departure. I booked the trip with my American Express Platinum card and have medical documentation and receipts for my nonrefundable travel expenses. Would trip cancellation benefits cover this?",
+    "top_k": 5,
+    "expected_label": "Unclear",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Adds verified covered event (hospitalization) and documentation, making trip cancellation eligibility clearly satisfied."
+  },
+  {
+    "id": "alaska_debit_trip_delay_overnight",
+    "query": "My Alaska Airlines flight was delayed 11 hours overnight and I had to pay for a hotel, dinner, breakfast, and a taxi. I booked the trip with my debit card and saved all of my receipts. Is trip delay coverage likely to apply?",
+    "top_k": 5,
+    "expected_label": "Not Eligible",
+    "expected_primary_lane": "airline_or_benefit",
+    "notes": "Tests a strong Mastercard trip-delay scenario with overnight delay and documented expenses."
+>>>>>>> 8b23d21 (Fixed previous commit)
   }
 ]

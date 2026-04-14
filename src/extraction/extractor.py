@@ -34,7 +34,6 @@ class PolicyRequirementExtractor:
         """Extract supported policy requirements from retrieved evidence."""
         if not passages:
             return self._parser.empty()
-
         response = self._client.responses.create(
             model=self._model,
             input=[
