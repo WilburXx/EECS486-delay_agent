@@ -1,6 +1,6 @@
 # DelayAgent
 
-DelayAgent is a modular Python 3.11 project for analyzing travel delay and baggage delay claims.
+DelayAgent is a modular Python 3.11 project that retrieves airline and credit card delay policies, determines claim eligibility based on policy rules, and extracts relevant policy fields from natural-language queries.
 
 ## Features
 
@@ -51,6 +51,12 @@ python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 cp .env.example .env
+```
+
+Then open `.env` and set your OpenAI API key:
+
+```
+OPENAI_API_KEY=your_key_here
 ```
 
 If `python3.11` is not on your `PATH` but Python 3.11 is your default `python3`, this also works:
